@@ -82,18 +82,17 @@ export default function Pager<T extends Route>({
 
   const jumpToIndex = React.useCallback(
     (index: number) => {
-      if (IS_IOS) {
-        console.log('current', indexRef.current, 'index', index);
-        nextSceneDistance.setValue(Math.abs(indexRef.current - index));
-      }
+      console.log('current', currentIndexRef.current, 'index', index);
+
       const offset = -index * layoutRef.current.width;
 
       const { timing, ...transitionConfig } = DefaultTransitionSpec;
+      const newOffset = offset + (IS_IOS ? Math.abs(currentIndexRef.current - index): 0);
 
       Animated.parallel([
         timing(panX, {
           ...transitionConfig,
-          toValue: Animated.multiply(offset, nextSceneDistance),
+          toValue: newOffset,
           useNativeDriver: false,
         }),
       ]).start(({ finished }) => {
