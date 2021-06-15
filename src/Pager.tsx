@@ -66,6 +66,7 @@ export default function Pager<T extends Route>({
   const { routes, index } = navigationState;
 
   const panX = useAnimatedValue(0);
+  const nextSceneDistance = useAnimatedValue(1);
 
   const listenersRef = React.useRef<Listener[]>([]);
 
@@ -86,7 +87,6 @@ export default function Pager<T extends Route>({
         nextSceneDistance.setValue(Math.abs(indexRef.current - index));
       }
       const offset = -index * layoutRef.current.width;
-      const nextSceneDistance = useAnimatedValue(1);
 
       const { timing, ...transitionConfig } = DefaultTransitionSpec;
 
@@ -129,6 +129,12 @@ export default function Pager<T extends Route>({
       jumpToIndex(index);
     }
   }, [jumpToIndex, keyboardDismissMode, layout.width, index]);
+
+  React.useEffect(() => {
+    if (IS_IOS) {
+      nextSceneDistance.setValue(1);
+    }
+  }, [navigationState.index, nextSceneDistance]);
 
   const isMovingHorizontally = (
     _: GestureResponderEvent,
